@@ -9,7 +9,7 @@ import java.util.List;
 
 @Controller
 public class HelloController {
-    @GetMapping("/")
+    @GetMapping({"/", "/index"})
     public String index(ModelMap modelMap) {
         List<String> messages = new ArrayList<>();
         messages.add("Hello!");

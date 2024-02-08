@@ -14,6 +14,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 
 //import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
+import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -61,9 +63,11 @@ public class WebSecurityConfig /*extends WebSecurityConfigurerAdapter*/ {
         return http
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/").permitAll()
-                        .requestMatchers("/user").hasRole("USER")
+                        .requestMatchers("/user").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
+                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
+                .logout(LogoutConfigurer::permitAll)
                 .httpBasic(Customizer.withDefaults())
                 .authenticationManager(authenticationManager(passwordEncoder(), userService))
                 .build();
