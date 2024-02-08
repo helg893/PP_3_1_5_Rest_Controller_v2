@@ -2,17 +2,19 @@ package ru.kata.spring.boot_security.demo.models;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
-import java.util.List;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import java.util.Collection;
+
 
 @Entity
 @Table(name = "users")
@@ -27,6 +29,10 @@ public class User {
     @NotEmpty(message = "поле не должно быть пустым")
     private String username;
 
+    @Column(name = "password")
+    @NotEmpty(message = "поле не должно быть пустым")
+    private String password;
+
     @Column(name = "name")
     private String name;
 
@@ -37,6 +43,12 @@ public class User {
     @NotEmpty(message = "поле не должно быть пустым")
     @Email(message = "должен быть корректный адрес e-mail")
     private String email;
+
+    @ManyToMany
+    @JoinTable(name = "users_roles",
+                joinColumns = @JoinColumn(name = "user_id"),
+                inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Collection<Role> roles;
 
     public User() {}
     public User(String name, String surname, String email) {
