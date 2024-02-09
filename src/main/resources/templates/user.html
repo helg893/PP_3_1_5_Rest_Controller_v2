@@ -24,6 +24,7 @@
     </style>
 </head>
 <body>
+<!--<form method="post" action="/logout"><input type="submit" class="submitLink" value="logout"></form>-->
 <form th:method="POST" th:action="@{/logout}"><input type="submit" class="submitLink" value="logout"></form>
 <h1 th:text="${user.getName() + ' ' + user.getSurname() + ', добро пожаловать!'}">User, welcome spring boot security page!</h1>
 <table>

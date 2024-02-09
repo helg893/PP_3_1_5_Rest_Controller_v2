@@ -13,6 +13,7 @@ import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,10 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format("Пользователь '%s' не найден", username)));
+
+        System.out.println(String.format(">>>>>>>>>>>>>>>> %s <<<<<<<<<<<<<<<<<<<<",
+                String.join("::", List.of(user.getUsername(), user.getName(), user.getSurname(), user.getEmail()))
+                ));
 
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
                 mapRolesToAuthorities(user.getRoles()));

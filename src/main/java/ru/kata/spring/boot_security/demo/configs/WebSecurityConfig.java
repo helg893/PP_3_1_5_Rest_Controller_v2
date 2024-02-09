@@ -3,6 +3,7 @@ package ru.kata.spring.boot_security.demo.configs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -43,12 +44,41 @@ public class WebSecurityConfig /*extends WebSecurityConfigurerAdapter*/ {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(passwordEncoder);
-        provider.setUserDetailsService(userDetailsService);
-        return new ProviderManager(provider);
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        return http
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/").permitAll()
+                        .anyRequest().authenticated())
+                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
+                .logout(httpSecurityLogoutConfigurer -> httpSecurityLogoutConfigurer
+                        .logoutSuccessUrl("/"))
+                .build();
     }
+
+//    @Bean
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//        return http
+//                .userDetailsService(userService)
+//                .authorizeHttpRequests(authz -> authz
+//                        .requestMatchers("/").permitAll()
+//                        .requestMatchers("/user").hasAnyRole("USER", "ADMIN")
+//                        .anyRequest().authenticated()
+//                )
+//                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
+//                .logout(LogoutConfigurer::permitAll)
+//                .httpBasic(Customizer.withDefaults())
+////                .authenticationManager(authenticationManager(passwordEncoder(), userService))
+//                .build();
+//    }
+
+
+//    @Bean
+//    public AuthenticationManager authenticationManager(PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
+//        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+//        provider.setPasswordEncoder(passwordEncoder);
+//        provider.setUserDetailsService(userDetailsService);
+//        return new ProviderManager(provider);
+//    }
 
 //    @Bean
 //    public AuthenticationProvider authenticationProvider() {
@@ -58,20 +88,7 @@ public class WebSecurityConfig /*extends WebSecurityConfigurerAdapter*/ {
 //        return provider;
 //    }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http
-                .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/user").hasAnyRole("USER", "ADMIN")
-                        .anyRequest().authenticated()
-                )
-                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
-                .logout(LogoutConfigurer::permitAll)
-                .httpBasic(Customizer.withDefaults())
-                .authenticationManager(authenticationManager(passwordEncoder(), userService))
-                .build();
-    }
+
 
 //    @Bean
 //    public BCryptPasswordEncoder passwordEncoder() {
