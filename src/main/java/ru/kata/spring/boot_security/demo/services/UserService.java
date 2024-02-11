@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public UserService(UserRepository userRepository) {
@@ -30,15 +30,24 @@ public class UserService implements UserDetailsService {
         return Optional.ofNullable(userRepository.findByUsername(username));
     }
 
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    @Transactional
+    public void save(User user) {
+        userRepository.save(user);
+    }
+
     @Transactional
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format("Пользователь '%s' не найден", username)));
 
-        System.out.println(String.format(">>>>>>>>>>>>>>>> %s <<<<<<<<<<<<<<<<<<<<",
-                String.join("::", List.of(user.getUsername(), user.getName(), user.getSurname(), user.getEmail()))
-                ));
+//        System.out.println(String.format(">>>>>>>>>>>>>>>> %s <<<<<<<<<<<<<<<<<<<<",
+//                String.join("::", List.of(user.getUsername(), user.getName(), user.getSurname(), user.getEmail()))
+//                ));
 
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
                 mapRolesToAuthorities(user.getRoles()));

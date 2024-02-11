@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+
+</head>
+<body>
+<form th:method="POST" th:action="@{/logout}">
+    <a th:href="@{/user}"><span sec:authentication="name"></span></a>
+    <input type="submit" class="submitLink" value="logout">
+</form>
+<table>
+    <thead>
+    <tr>
+        <th scope="col">username</th>
+        <th scope="col">Имя</th>
+        <th scope="col">Фамилия</th>
+        <th scope="col">E-mail</th>
+        <th scope="col">Роль:</th>
+        <th scope="col"><a th:href="@{/admin/newUser}"><button>Добавить</button></a></th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.getUsername()}">username</td>
+        <td th:text="${user.getName()}">name</td>
+        <td th:text="${user.getSurname()}">surname</td>
+        <td th:text="${user.getEmail()}">email</td>
+        <td><th:block th:each="role : ${user.getRoles()}"><div th:text="${role}">roles</div></th:block></td>
+<!--        <td th:text="${user.getRoles()}"></td>-->
+        <td><a th:href="@{/admin/edit?id={id}(id=${user.getId()})}"><button>Изменить</button></a></td>
+        <td>
+            <form th:method="DELETE" th:action="@{/admin?id={id}(id=${user.getId()})}">
+                <input type="submit" value="Удалить">
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

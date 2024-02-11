@@ -23,4 +23,11 @@ public class Role {
 
     public Role() { }
 
+
+    public String toString() {
+        if (role.startsWith("ROLE_")) {
+            return role.substring(5);
+        }
+        return role;
+    }
 }

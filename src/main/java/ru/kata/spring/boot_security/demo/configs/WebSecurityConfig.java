@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.configs;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -47,13 +48,25 @@ public class WebSecurityConfig /*extends WebSecurityConfigurerAdapter*/ {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> auth
+//                          .anyRequest().permitAll())
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/").permitAll()
+                        .requestMatchers("/admin**").hasRole("ADMIN")
                         .anyRequest().authenticated())
-                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
+
+                .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer
+                        .permitAll()
+                        .successHandler(new SuccessUserHandler()))
+//                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
                 .logout(httpSecurityLogoutConfigurer -> httpSecurityLogoutConfigurer
                         .logoutSuccessUrl("/"))
                 .build();
     }
+
+//    @Bean
+//    public SpringSecurityDialect springSecurityDialect(){
+//        return new SpringSecurityDialect();
+//    }
 
 //    @Bean
 //    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

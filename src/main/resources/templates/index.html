@@ -1,15 +1,27 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<!--<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity4">-->
 <head>
     <meta charset="UTF-8">
     <title>Spring Security Example (KATA 3.1.2)</title>
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
 </head>
 <body>
+<div sec:authorize="isAuthenticated()">
+    <form th:method="POST" th:action="@{/logout}">
+        <a th:href="@{/user}"><span sec:authentication="name"></span></a>
+        <input type="submit" class="submitLink" value="logout">
+    </form>
+</div>
+<div sec:authorize="isAnonymous()">
+    <a th:href="@{/login}">login</a>
+</div>
 <h1>Welcome to Index PAGE!!!</h1>
 <div>
     <th:block th:each="msg : ${messages}">
         <h1 th:text="${msg}"></h1>
     </th:block>
 </div>
+
 </body>
 </html>

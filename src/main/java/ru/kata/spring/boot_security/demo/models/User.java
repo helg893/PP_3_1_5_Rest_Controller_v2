@@ -13,6 +13,10 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import java.util.ArrayList;
 import java.util.Collection;
 
 
@@ -55,6 +59,11 @@ public class User {
         this.name = name;
         this.surname = surname;
         this.email = email;
+        roles = new ArrayList<>();
+    }
+
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return getRoles().stream().map(r -> new SimpleGrantedAuthority(r.getRole())).toList();
     }
 
 }
