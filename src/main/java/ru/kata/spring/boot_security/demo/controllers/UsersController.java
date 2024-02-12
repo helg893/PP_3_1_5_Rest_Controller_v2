@@ -2,12 +2,16 @@ package ru.kata.spring.boot_security.demo.controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.services.RoleService;
 import ru.kata.spring.boot_security.demo.services.UserService;
@@ -15,6 +19,7 @@ import ru.kata.spring.boot_security.demo.util.UserValidator;
 
 
 import java.security.Principal;
+import java.util.NoSuchElementException;
 
 @Controller
 public class UsersController {
@@ -29,7 +34,7 @@ public class UsersController {
         this.userValidator = userValidator;
     }
 
-    @GetMapping("/user")
+    @GetMapping(value = "/user")
     public String user(Principal principal, Model model) {
 //        if (principal == null) {
 //            model.addAttribute("user", new User("NewUser", "newUser", "NewUser@mail.ru"));
@@ -40,20 +45,20 @@ public class UsersController {
         return "user";
     }
 
-    @GetMapping("/admin")
+    @GetMapping(value = "/admin")
 //    @PreAuthorize("hasRole('ADMIN')")
     public String admin(Model model) {
         model.addAttribute("users", userService.findAll());
         return "admin/users";
     }
 
-    @GetMapping("/admin/newUser")
+    @GetMapping(value = "/admin/newUser")
     public String newUser(@ModelAttribute("user") User user, Model model) {
         model.addAttribute("allRoles", roleService.findAll());
         return "admin/newUser";
     }
 
-    @PostMapping("/admin")
+    @PostMapping(value = "/admin")
     public String create(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
         userValidator.validate(user, bindingResult);
         if (bindingResult.hasErrors()) {
@@ -64,5 +69,33 @@ public class UsersController {
         return "redirect:/admin";
     }
 
+    private static final String ERROR_MSG_USER_ID_NOT_FOUND = "Пользователь c id=%s не найден";
+
+    @GetMapping(value = "/admin/edit")
+    public String edit(@RequestParam String id, Model model) {
+        try {
+            model.addAttribute("user", userService.findById(Long.parseLong(id)).orElseThrow());
+        } catch (NumberFormatException | NoSuchElementException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format(ERROR_MSG_USER_ID_NOT_FOUND, id));
+        }
+        model.addAttribute("allRoles", roleService.findAll());
+        return "admin/editUser";
+    }
+
+    @PatchMapping(value = "/admin")
+    public String update(@RequestParam String id, @ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+        userValidator.validate(user, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return "admin/editUser";
+        }
+        try {
+            userService.update(Long.parseLong(id), user);
+        } catch (NumberFormatException | NoSuchElementException e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format(ERROR_MSG_USER_ID_NOT_FOUND, id));
+        }
+//        System.out.println(user);
+        return "redirect:/admin";
+    }
 
 }

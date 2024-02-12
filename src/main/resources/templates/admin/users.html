@@ -30,7 +30,6 @@
         <td th:text="${user.getSurname()}">surname</td>
         <td th:text="${user.getEmail()}">email</td>
         <td><th:block th:each="role : ${user.getRoles()}"><div th:text="${role}">roles</div></th:block></td>
-<!--        <td th:text="${user.getRoles()}"></td>-->
         <td><a th:href="@{/admin/edit?id={id}(id=${user.getId()})}"><button>Изменить</button></a></td>
         <td>
             <form th:method="DELETE" th:action="@{/admin?id={id}(id=${user.getId()})}">

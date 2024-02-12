@@ -34,6 +34,10 @@ public class UserService implements UserDetailsService {
         return Optional.ofNullable(userRepository.findByUsername(username));
     }
 
+    public Optional<User> findById(long id) {
+        return userRepository.findById(id);
+    }
+
     public List<User> findAll() {
         return userRepository.findAll();
     }
@@ -42,6 +46,15 @@ public class UserService implements UserDetailsService {
     public void save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+    }
+
+    @Transactional
+    public void update(long id, User updatedUser) {
+        System.out.printf(">>>>>>>>>>>>>>>>>> update: id = %s; updatedUser = %s%n", id, updatedUser);
+        updatedUser.setId(id);
+        System.out.printf(">>>>>>>>>>>>>>>>>> update set id: updatedUser = %s%n", updatedUser);
+        userRepository.save(updatedUser);
+        System.out.printf(">>>>>>>>>>>>>>>>>> update repo save: updatedUser = %s%n", updatedUser);
     }
 
     @Transactional

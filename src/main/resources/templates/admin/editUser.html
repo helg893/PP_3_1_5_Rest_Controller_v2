@@ -2,11 +2,11 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Добавить нового пользователя</title>
+    <title>Редактировать пользователя</title>
     <link th:href="@{/css/styles.css}" rel="stylesheet">
 </head>
 <body>
-<form th:method="POST" th:action="@{/admin}" th:object="${user}">
+<form th:method="patch" th:action="@{/admin?id={uid}(uid=${user.getId()})}" th:object="${user}">
     <label for="username">введите username:</label>
     <input type="text" th:field="*{username}" id="username"/>
     <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color: red">username Error</div>
@@ -34,7 +34,8 @@
         <label th:for="${{role}}" th:text="${role.role}">Admin</label>
     </div>
     <br/>
-    <input type="submit" value="Добавить"/>
+    <input type="submit" value="Сохранить"/>
 </form>
+
 </body>
 </html>
