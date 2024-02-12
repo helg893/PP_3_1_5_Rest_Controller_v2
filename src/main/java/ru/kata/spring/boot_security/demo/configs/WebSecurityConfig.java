@@ -33,16 +33,18 @@ import ru.kata.spring.boot_security.demo.services.UserService;
 @EnableWebSecurity
 public class WebSecurityConfig /*extends WebSecurityConfigurerAdapter*/ {
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public WebSecurityConfig(UserService userService) {
+    public WebSecurityConfig(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

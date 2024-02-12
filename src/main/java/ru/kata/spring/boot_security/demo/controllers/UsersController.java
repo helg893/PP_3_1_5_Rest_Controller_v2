@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.services.RoleService;
 import ru.kata.spring.boot_security.demo.services.UserService;
+import ru.kata.spring.boot_security.demo.util.UserValidator;
 
 
 import java.security.Principal;
@@ -19,11 +20,13 @@ import java.security.Principal;
 public class UsersController {
     private final UserService userService;
     private final RoleService roleService;
+    private final UserValidator userValidator;
 
     @Autowired
-    public UsersController(UserService userService, RoleService roleService) {
+    public UsersController(UserService userService, RoleService roleService, UserValidator userValidator) {
         this.userService = userService;
         this.roleService = roleService;
+        this.userValidator = userValidator;
     }
 
     @GetMapping("/user")
@@ -46,16 +49,20 @@ public class UsersController {
 
     @GetMapping("/admin/newUser")
     public String newUser(@ModelAttribute("user") User user, Model model) {
-        model.addAttribute("roles", roleService.findAll());
+        model.addAttribute("allRoles", roleService.findAll());
         return "admin/newUser";
     }
 
     @PostMapping("/admin")
     public String create(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+        userValidator.validate(user, bindingResult);
         if (bindingResult.hasErrors()) {
             return "admin/newUser";
         }
+        //System.out.println(user);
         userService.save(user);
-        return "redirect:admin/users";
+        return "redirect:/admin";
     }
+
+
 }

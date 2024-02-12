@@ -23,11 +23,15 @@ public class Role {
 
     public Role() { }
 
-
+    @Override
     public String toString() {
-        if (role.startsWith("ROLE_")) {
-            return role.substring(5);
-        }
         return role;
     }
+
+    //    public String toString() {
+//        if (role.startsWith("ROLE_")) {
+//            return role.substring(5);
+//        }
+//        return role;
+//    }
 }
