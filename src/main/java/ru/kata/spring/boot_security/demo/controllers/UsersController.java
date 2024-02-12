@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -36,17 +37,11 @@ public class UsersController {
 
     @GetMapping(value = "/user")
     public String user(Principal principal, Model model) {
-//        if (principal == null) {
-//            model.addAttribute("user", new User("NewUser", "newUser", "NewUser@mail.ru"));
-//        } else {
-//            model.addAttribute("user", userService.findByUsername(principal.getName()).orElseThrow());
-//        }
         model.addAttribute("user", userService.findByUsername(principal.getName()).orElseThrow());
         return "user";
     }
 
     @GetMapping(value = "/admin")
-//    @PreAuthorize("hasRole('ADMIN')")
     public String admin(Model model) {
         model.addAttribute("users", userService.findAll());
         return "admin/users";
@@ -72,10 +67,10 @@ public class UsersController {
     private static final String ERROR_MSG_USER_ID_NOT_FOUND = "Пользователь c id=%s не найден";
 
     @GetMapping(value = "/admin/edit")
-    public String edit(@RequestParam String id, Model model) {
+    public String edit(@RequestParam final long id, Model model) {
         try {
-            model.addAttribute("user", userService.findById(Long.parseLong(id)).orElseThrow());
-        } catch (NumberFormatException | NoSuchElementException e) {
+            model.addAttribute("user", userService.findById(id).orElseThrow());
+        } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format(ERROR_MSG_USER_ID_NOT_FOUND, id));
         }
         model.addAttribute("allRoles", roleService.findAll());
@@ -83,18 +78,21 @@ public class UsersController {
     }
 
     @PatchMapping(value = "/admin")
-    public String update(@RequestParam String id, @ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
-        userValidator.validate(user, bindingResult);
+    public String update(@RequestParam final long id/*@RequestParam final String id*/, @ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+        String oldUsername = userService.findById(id).orElseThrow().getUsername();
+        if (!oldUsername.equalsIgnoreCase(user.getUsername())) {
+            userValidator.validate(user, bindingResult);
+        }
         if (bindingResult.hasErrors()) {
             return "admin/editUser";
         }
-        try {
-            userService.update(Long.parseLong(id), user);
-        } catch (NumberFormatException | NoSuchElementException e) {
-            e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format(ERROR_MSG_USER_ID_NOT_FOUND, id));
-        }
-//        System.out.println(user);
+        userService.update(id, user);
+        return "redirect:/admin";
+    }
+
+    @DeleteMapping(value = "/admin")
+    public String delete(@RequestParam final long id) {
+        userService.deleteById(id);
         return "redirect:/admin";
     }
 

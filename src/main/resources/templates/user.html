@@ -1,36 +1,11 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity4" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" lang="en">
 <head>
-<!--    <title>Spring Security Example</title>-->
     <meta charset="UTF-8">
     <title>User</title>
-<!--    <link rel="stylesheet" th:href="@{/css/styles.css}" />-->
-    <link th:href="@{/css/styles.css}" rel="stylesheet"></link>
-<!--    <link media="all" rel="stylesheet" th:href="@{static/css/styles.css}" type="text/css"/>-->
-<!--    <link media="all" rel="stylesheet" th:href="@{static/css/styles.css}" type="text/css"/>-->
-<!--    <link rel="stylesheet" href="css/styles.css">-->
-
-<!--    <style>-->
-<!--        table, th, td {-->
-<!--            border: 1px solid black;-->
-<!--            border-radius: 10px;-->
-<!--            border-spacing: 10px;-->
-<!--            padding: 10px;-->
-<!--        }-->
-<!--        .submitLink {-->
-<!--            background-color: transparent;-->
-<!--            text-decoration: underline;-->
-<!--            border: none;-->
-<!--            color: blue;-->
-<!--            cursor: pointer;-->
-<!--        }-->
-<!--        submitLink:focus {-->
-<!--            outline: none;-->
-<!--        }-->
-<!--    </style>-->
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
 </head>
 <body>
-<!--<form method="post" action="/logout"><input type="submit" class="submitLink" value="logout"></form>-->
 <form th:method="POST" th:action="@{/logout}"><input type="submit" class="submitLink" value="logout"></form>
 <h1 th:text="${user.getName() + ' ' + user.getSurname() + ', добро пожаловать!'}">User, welcome spring boot security page!</h1>
 <table>
@@ -39,8 +14,6 @@
     <tr><td>фамилия:</td><td th:text="${user.getSurname()}">surname</td></tr>
     <tr><td>e-mail:</td><td th:text="${user.getEmail()}">e-mail</td></tr>
     <tr><td>роль:</td><td><div th:each="r : ${user.getRoles()}"><p th:text="${r.getRole()}"></p></div></td></tr>
-<!--    <tr><td>роль:</td><td th:text="${String.join(' ', user.getRoles())}">role</td></tr>-->
 </table>
-
 </body>
 </html>

@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.kata.spring.boot_security.demo.configs.WebSecurityConfig;
 import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
@@ -50,11 +49,14 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void update(long id, User updatedUser) {
-        System.out.printf(">>>>>>>>>>>>>>>>>> update: id = %s; updatedUser = %s%n", id, updatedUser);
+        updatedUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         updatedUser.setId(id);
-        System.out.printf(">>>>>>>>>>>>>>>>>> update set id: updatedUser = %s%n", updatedUser);
         userRepository.save(updatedUser);
-        System.out.printf(">>>>>>>>>>>>>>>>>> update repo save: updatedUser = %s%n", updatedUser);
+    }
+
+    @Transactional
+    public void deleteById(final long id) {
+        userRepository.deleteById(id);
     }
 
     @Transactional
@@ -62,10 +64,6 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format("Пользователь '%s' не найден", username)));
-
-//        System.out.println(String.format(">>>>>>>>>>>>>>>> %s <<<<<<<<<<<<<<<<<<<<",
-//                String.join("::", List.of(user.getUsername(), user.getName(), user.getSurname(), user.getEmail()))
-//                ));
 
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
                 mapRolesToAuthorities(user.getRoles()));

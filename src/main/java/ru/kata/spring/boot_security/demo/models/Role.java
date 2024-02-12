@@ -28,10 +28,4 @@ public class Role {
         return role;
     }
 
-    //    public String toString() {
-//        if (role.startsWith("ROLE_")) {
-//            return role.substring(5);
-//        }
-//        return role;
-//    }
 }
