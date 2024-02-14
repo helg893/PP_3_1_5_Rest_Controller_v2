@@ -1,11 +1,12 @@
-CREATE SCHEMA `katapp313` DEFAULT CHARACTER SET utf8 ;
+CREATE SCHEMA `katapp313v2` DEFAULT CHARACTER SET utf8 ;
 
-CREATE TABLE `katapp313`.`users` (
+CREATE TABLE `katapp313v2`.`users` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(30) NOT NULL,
   `password` VARCHAR(80) NOT NULL,
   `name` VARCHAR(50) NULL,
   `surname` VARCHAR(50) NULL,
+  `age` INT NULL,
   `email` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `username_UNIQUE` (`username` ASC) VISIBLE,
@@ -13,28 +14,30 @@ CREATE TABLE `katapp313`.`users` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
-insert into users (`username`, `password`, `name`, `surname`, `email`)
+insert into users (`username`, `password`, `name`, `surname`, `email`, `age`)
 values
-('admin', '$2a$12$bLXaBMr/pIM8irGA5MirfeoNsdrua4MQy6ofaIgEbRxYyUNcbYqKa', 'AdminFirstName', 'AdminLastName', 'admin@mail.ru'),
-('user', '$2a$12$.IAR76ZBJlVtPTaec4CFGOg6JnaTlrVaTa0TSUyi3pSIW.cwzY15O', 'UserFirstName', 'UserLastName', 'user@mail.ru');
+('admin', '$2a$12$bLXaBMr/pIM8irGA5MirfeoNsdrua4MQy6ofaIgEbRxYyUNcbYqKa', 'AdminFirstName', 'AdminLastName', 'admin@mail.ru', 100),
+('user', '$2a$12$.IAR76ZBJlVtPTaec4CFGOg6JnaTlrVaTa0TSUyi3pSIW.cwzY15O', 'UserFirstName', 'UserLastName', 'user@mail.ru', 100);
 
+select * from `katapp313v2`.`users`;
 
-CREATE TABLE `katapp313`.`roles` (
+CREATE TABLE `katapp313v2`.`roles` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `role` VARCHAR(50) NOT NULL,
+  `name` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `role_UNIQUE` (`role` ASC) VISIBLE)
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 insert into roles
-(`role`)
+(`name`)
 values
 ('ROLE_ADMIN'),
 ('ROLE_USER');
 
+select * from `katapp313v2`.`roles`;
 
-CREATE TABLE `katapp313`.`users_roles` (
+CREATE TABLE `katapp313v2`.`users_roles` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `user_id` INT NOT NULL,
   `role_id` INT NOT NULL,
@@ -43,12 +46,12 @@ CREATE TABLE `katapp313`.`users_roles` (
   INDEX `fk_role_idx` (`role_id` ASC) VISIBLE,
   CONSTRAINT `fk_user`
     FOREIGN KEY (`user_id`)
-    REFERENCES `katapp313`.`users` (`id`)
+    REFERENCES `katapp313v2`.`users` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_role`
     FOREIGN KEY (`role_id`)
-    REFERENCES `katapp313`.`roles` (`id`)
+    REFERENCES `katapp313v2`.`roles` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -57,5 +60,5 @@ DEFAULT CHARACTER SET = utf8;
 insert into users_roles
 (user_id, role_id)
 values
-(3, 1),
-(4, 2);
+(1, 1),
+(2, 2);

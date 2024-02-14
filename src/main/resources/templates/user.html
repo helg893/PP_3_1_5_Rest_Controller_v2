@@ -13,7 +13,8 @@
     <tr><td>имя:</td><td th:text="${user.getName()}">name</td></tr>
     <tr><td>фамилия:</td><td th:text="${user.getSurname()}">surname</td></tr>
     <tr><td>e-mail:</td><td th:text="${user.getEmail()}">e-mail</td></tr>
-    <tr><td>роль:</td><td><div th:each="r : ${user.getRoles()}"><p th:text="${r.getRole()}"></p></div></td></tr>
+    <tr><td>возраст:</td><td th:text="${user.getAge()}">age</td></tr>
+    <tr><td>роль:</td><td><div th:each="r : ${user.getAuthorities()}"><p th:text="${r}"></p></div></td></tr>
 </table>
 </body>
 </html>

@@ -28,11 +28,16 @@
     <input type="text" th:field="*{email}" id="email"/>
     <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red">E-mail Error</div>
     <br/>
+    <label for="age">введите возраст:</label>
+    <input type="number" th:field="*{age}" id="age" />
+    <div th:if="${#fields.hasErrors('age')}" th:errors="*{age}" style="color: red">Age Error</div>
+    <input type="hidden" th:field="*{id}" />
+    <br/>
     <input type="hidden" th:field="*{id}" />
     <span>Роль пользователя:</span>
     <div th:each="role: ${allRoles}">
         <input type="checkbox" th:id="${{role}}" th:value="${{role}}" th:field="*{roles}" />
-        <label th:for="${{role}}" th:text="${role.role}">Admin</label>
+        <label th:for="${{role}}" th:text="${role}">Admin</label>
     </div>
     <br/>
     <input type="submit" value="Добавить"/>

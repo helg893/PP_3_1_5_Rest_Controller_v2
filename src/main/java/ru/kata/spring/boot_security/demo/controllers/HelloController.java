@@ -14,7 +14,7 @@ public class HelloController {
         List<String> messages = new ArrayList<>();
         messages.add("Hello!");
         messages.add("I`m Spring MVC application");
-        messages.add("KATA PP 3.1.3 Spring Security");
+        messages.add("KATA PreProject 3.1.3 Spring Security");
         modelMap.addAttribute("messages", messages);
         return "index";
     }

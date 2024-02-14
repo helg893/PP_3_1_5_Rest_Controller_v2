@@ -1,5 +1,6 @@
 package ru.kata.spring.boot_security.demo.models;
 
+import jakarta.persistence.FetchType;
 import lombok.Data;
 
 import jakarta.persistence.Column;
@@ -14,7 +15,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,7 +24,7 @@ import java.util.Collection;
 @Entity
 @Table(name = "users")
 @Data
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -43,12 +44,15 @@ public class User {
     @Column(name = "surname")
     private String surname;
 
+    @Column(name = "age")
+    private int age;
+
     @Column(name = "email")
     @NotEmpty(message = "поле не должно быть пустым")
     @Email(message = "должен быть корректный адрес e-mail")
     private String email;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
                 joinColumns = @JoinColumn(name = "user_id"),
                 inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -63,7 +67,26 @@ public class User {
     }
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles().stream().map(r -> new SimpleGrantedAuthority(r.getRole())).toList();
+        return getRoles();
     }
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

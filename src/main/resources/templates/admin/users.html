@@ -18,6 +18,7 @@
         <th scope="col">Имя</th>
         <th scope="col">Фамилия</th>
         <th scope="col">E-mail</th>
+        <th scope="col">Возраст</th>
         <th scope="col">Роль:</th>
         <th scope="col"><a th:href="@{/admin/newUser}"><button>Добавить</button></a></th>
         <th scope="col"></th>
@@ -29,7 +30,8 @@
         <td th:text="${user.getName()}">name</td>
         <td th:text="${user.getSurname()}">surname</td>
         <td th:text="${user.getEmail()}">email</td>
-        <td><th:block th:each="role : ${user.getRoles()}"><div th:text="${role}">roles</div></th:block></td>
+        <td th:text="${user.getAge()}">age</td>
+        <td><th:block th:each="role : ${user.getAuthorities()}"><div th:text="${role}">roles</div></th:block></td>
         <td><a th:href="@{/admin/edit?id={id}(id=${user.getId()})}"><button>Изменить</button></a></td>
         <td>
             <form th:method="DELETE" th:action="@{/admin?id={id}(id=${user.getId()})}">

@@ -78,7 +78,8 @@ public class UsersController {
     }
 
     @PatchMapping(value = "/admin")
-    public String update(@RequestParam final long id/*@RequestParam final String id*/, @ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+    public String update(@RequestParam final long id/*@RequestParam final String id*/,
+                         @ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
         String oldUsername = userService.findById(id).orElseThrow().getUsername();
         if (!oldUsername.equalsIgnoreCase(user.getUsername())) {
             userValidator.validate(user, bindingResult);
