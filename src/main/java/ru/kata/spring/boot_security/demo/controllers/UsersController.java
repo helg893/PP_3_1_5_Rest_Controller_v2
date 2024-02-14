@@ -59,7 +59,6 @@ public class UsersController {
         if (bindingResult.hasErrors()) {
             return "admin/newUser";
         }
-        //System.out.println(user);
         userService.save(user);
         return "redirect:/admin";
     }
