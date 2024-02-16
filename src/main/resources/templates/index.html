@@ -2,25 +2,63 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/css/bootstrap.css" rel="stylesheet" />
+<!--    <link th:href="@{/css/styles.css}" rel="stylesheet">-->
     <title>Spring Security Example (KATA 3.1.2)</title>
-    <link th:href="@{/css/styles.css}" rel="stylesheet">
 </head>
 <body>
-<div sec:authorize="isAuthenticated()">
-    <form th:method="POST" th:action="@{/logout}">
-        <a th:href="@{/user}"><span sec:authentication="name"></span></a>
-        <input type="submit" class="submitLink" value="logout">
-    </form>
-</div>
-<div sec:authorize="isAnonymous()">
-    <a th:href="@{/login}">login</a>
-</div>
-<h1>Welcome to Index PAGE!!!</h1>
-<div>
-    <th:block th:each="msg : ${messages}">
-        <h1 th:text="${msg}"></h1>
-    </th:block>
-</div>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+<!--        <a class="navbar-brand" href="#">Fixed navbar</a>-->
+<!--        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">-->
+<!--            <span class="navbar-toggler-icon"></span>-->
+<!--        </button>-->
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link active" th:href="@{/user}"><h1 sec:authentication="name">USER NAME</h1></a>
+<!--                    <a class="nav-link active" th:href="@{/user}"><h1 th:text="${user.getUsername()}">USER NAME</h1></a>-->
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link"><h1>with roles:</h1></a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+<!--                    <a class="nav-link"><h1 sec:authentication="${#strings.listJoin(principal.authorities, ', ')}"></h1></a>-->
+                    <a class="nav-link"><h1 th:text="${#strings.listJoin(user.getAuthorities(),', ')}"></h1></a>
+                </li>
 
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link disabled" aria-disabled="true">Disabled</a>-->
+<!--                </li>-->
+            </ul>
+<!--            <form class="d-flex" role="search">-->
+<!--                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">-->
+<!--                <button class="btn btn-outline-success" type="submit">Search</button>-->
+<!--            </form>-->
+        </div>
+    </div>
+</nav>
+
+
+<main class="container">
+    <div sec:authorize="isAuthenticated()">
+        <form th:method="POST" th:action="@{/logout}">
+            <a th:href="@{/user}"><span sec:authentication="name"></span></a>
+            <input type="submit" class="submitLink" value="logout">
+        </form>
+    </div>
+    <div sec:authorize="isAnonymous()">
+        <a th:href="@{/login}">login</a>
+    </div>
+    <h1>Welcome to Index PAGE!!!</h1>
+    <div>
+        <th:block th:each="msg : ${messages}">
+            <h1 th:text="${msg}"></h1>
+        </th:block>
+    </div>
+</main>
+
+    <script src="/js/bootstrap.bundle.js"></script>
 </body>
 </html>
