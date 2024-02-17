@@ -2,45 +2,142 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <meta charset="UTF-8">
-    <title>Users</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/css/bootstrap.css" rel="stylesheet" />
+    <title>Admin panel</title>
 <!--    <link th:href="@{/css/styles.css}" rel="stylesheet">-->
 
 </head>
 <body>
-<form th:method="POST" th:action="@{/logout}">
-    <a th:href="@{/user}"><span sec:authentication="name"></span></a>
-    <input type="submit" class="submitLink" value="logout">
-</form>
-<table>
-    <thead>
-    <tr>
-        <th scope="col">username</th>
-        <th scope="col">Имя</th>
-        <th scope="col">Фамилия</th>
-        <th scope="col">E-mail</th>
-        <th scope="col">Возраст</th>
-        <th scope="col">Роль:</th>
-        <th scope="col"><a th:href="@{/admin/newUser}"><button>Добавить</button></a></th>
-        <th scope="col"></th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="user : ${users}">
-        <td th:text="${user.getUsername()}">username</td>
-        <td th:text="${user.getName()}">name</td>
-        <td th:text="${user.getSurname()}">surname</td>
-        <td th:text="${user.getEmail()}">email</td>
-        <td th:text="${user.getAge()}">age</td>
-        <td><th:block th:each="role : ${user.getAuthorities()}"><div th:text="${role}">roles</div></th:block></td>
-        <td><a th:href="@{/admin/edit?id={id}(id=${user.getId()})}"><button>Изменить</button></a></td>
-        <td>
-            <form th:method="DELETE" th:action="@{/admin?id={id}(id=${user.getId()})}">
-                <input type="submit" value="Удалить">
-            </form>
-        </td>
-    </tr>
-    </tbody>
-</table>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark mb-3">
+    <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav me-auto mb-1 mb-md-0">
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link active" th:href="@{/user}"><h4 sec:authentication="name">USER NAME</h4></a>
+<!--                    <a class="nav-link active" th:href="@{/user}"><h1 th:text="${user.getUsername()}">USER NAME</h1></a>-->
+                </li>
+                <li class="nav-item disabled" sec:authorize="isAuthenticated()">
+                    <a class="nav-link"><h4>with roles:</h4></a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+<!--                    <a class="nav-link"><h1 sec:authentication="${#strings.listJoin(principal.authorities, ', ')}"></h1></a>-->
+                    <a class="nav-link" disabled=""><h4 th:text="${#strings.listJoin(loggedInUser.getAuthorities(),', ')}">[ROLES]</h4></a>
+                </li>
+            </ul>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto mb-1 mb-md-0">
+                <li class="nav-item" sec:authorize="isAnonymous()">
+                    <a class="nav-link active" th:href="@{/login}"><h4>Login</h4></a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <form th:method="POST" th:action="@{/logout}">
+                        <h4><input type="submit" class="nav-link active" value="Logout"></h4>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+        <div class="row min-vh-100">
+            <div class="col-sm-2 col-xs-12">
+                <ul class="nav nav-pills flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page">Admin</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/user}">User</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-10 col-xs-12 bg-light">
+                <H1>Admin panel</H1>
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" >Users table</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">New user</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content p-2 bg-body border">
+                    <h4 class="p-2 bg-body-secondary">All users</h4>
+                    <table class="table table-striped p-2 border-top">
+                        <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">First Name</th>
+                            <th scope="col">Last Name</th>
+                            <th scope="col">Age</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">Edit</th>
+                            <th scope="col">Delete</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="user : ${users}">
+                            <td th:text="${user.getId()}">Id</td>
+                            <td th:text="${user.getName()}">Name</td>
+                            <td th:text="${user.getSurname()}">Surname</td>
+                            <td th:text="${user.getAge()}">age</td>
+                            <td th:text="${user.getEmail()}">email</td>
+                            <td><th:block th:text="${#strings.listJoin(user.getAuthorities(),' ')}"></th:block></td>
+                            <td>
+                                <form th:method="POST" th:action="@{/admin/edit?id={id}(id=${user.getId()})}">
+                                    <input class="btn btn-primary" type="submit" value="Edit">
+                                </form>
+                            </td>
+                            <td>
+                                <form th:method="DELETE" th:action="@{/admin?id={id}(id=${user.getId()})}">
+                                    <input class="btn btn-danger" type="submit" value="Delete">
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+</div>
+
+<!--<footer class="container-fluid">-->
+<!--    <table>-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th scope="col">username</th>-->
+<!--            <th scope="col">Имя</th>-->
+<!--            <th scope="col">Фамилия</th>-->
+<!--            <th scope="col">E-mail</th>-->
+<!--            <th scope="col">Возраст</th>-->
+<!--            <th scope="col">Роль:</th>-->
+<!--            <th scope="col"><a th:href="@{/admin/newUser}"><button>Добавить</button></a></th>-->
+<!--            <th scope="col"></th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
+<!--        <tr th:each="user : ${users}">-->
+<!--            <td th:text="${user.getUsername()}">username</td>-->
+<!--            <td th:text="${user.getName()}">name</td>-->
+<!--            <td th:text="${user.getSurname()}">surname</td>-->
+<!--            <td th:text="${user.getEmail()}">email</td>-->
+<!--            <td th:text="${user.getAge()}">age</td>-->
+<!--            <td><th:block th:each="role : ${user.getAuthorities()}"><div th:text="${role}">roles</div></th:block></td>-->
+<!--            <td><a th:href="@{/admin/edit?id={id}(id=${user.getId()})}"><button>Изменить</button></a></td>-->
+<!--            <td>-->
+<!--                <form th:method="DELETE" th:action="@{/admin?id={id}(id=${user.getId()})}">-->
+<!--                    <input type="submit" value="Удалить">-->
+<!--                </form>-->
+<!--            </td>-->
+<!--        </tr>-->
+<!--        </tbody>-->
+<!--    </table>-->
+<!--</footer>-->
 
 </body>
 </html>

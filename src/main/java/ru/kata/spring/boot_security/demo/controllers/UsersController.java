@@ -37,13 +37,14 @@ public class UsersController {
 
     @GetMapping(value = "/user")
     public String user(Principal principal, Model model) {
-        model.addAttribute("user", userService.findByUsername(principal.getName()).orElseThrow());
+        model.addAttribute("loggedInUser", userService.findByUsername(principal.getName()).orElseThrow());
         return "user";
     }
 
     @GetMapping(value = "/admin")
-    public String admin(Model model) {
+    public String admin(Principal principal, Model model) {
         model.addAttribute("users", userService.findAll());
+        model.addAttribute("loggedInUser", userService.findByUsername(principal.getName()).orElseThrow());
         return "admin/users";
     }
 

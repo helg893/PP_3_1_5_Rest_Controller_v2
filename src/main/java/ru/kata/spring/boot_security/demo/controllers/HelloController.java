@@ -19,15 +19,15 @@ public class HelloController {
 
     @GetMapping({"/", "/index"})
     public String index(Principal principal, ModelMap modelMap) {
+        if (principal != null) {
+            modelMap.addAttribute("loggedInUser", userService.findByUsername(principal.getName()).orElseThrow());
+        }
         List<String> messages = new ArrayList<>();
         messages.add("Hello!");
         messages.add("I`m Spring MVC application");
         messages.add("KATA PreProject 3.1.3 Spring Security");
         modelMap.addAttribute("messages", messages);
 
-        if (principal != null) {
-            modelMap.addAttribute("user" , userService.findByUsername(principal.getName()).orElseThrow());
-        }
         return "index";
     }
 
