@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -45,19 +46,24 @@ public class UsersController {
     public String admin(Principal principal, Model model) {
         model.addAttribute("users", userService.findAll());
         model.addAttribute("loggedInUser", userService.findByUsername(principal.getName()).orElseThrow());
+        model.addAttribute("userToUpdate", new User());
+        model.addAttribute("allRoles", roleService.findAll());
         return "admin/users";
     }
 
     @GetMapping(value = "/admin/newUser")
-    public String newUser(@ModelAttribute("user") User user, Model model) {
+    public String newUser(Principal principal, @ModelAttribute("user") User user, Model model) {
+        model.addAttribute("loggedInUser", userService.findByUsername(principal.getName()).orElseThrow());
         model.addAttribute("allRoles", roleService.findAll());
         return "admin/newUser";
     }
 
     @PostMapping(value = "/admin")
-    public String create(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+    public String create(Principal principal, @ModelAttribute("user") @Valid User user, BindingResult bindingResult, Model model) {
         userValidator.validate(user, bindingResult);
         if (bindingResult.hasErrors()) {
+            model.addAttribute("loggedInUser", userService.findByUsername(principal.getName()).orElseThrow());
+            model.addAttribute("allRoles", roleService.findAll());
             return "admin/newUser";
         }
         userService.save(user);
@@ -67,7 +73,7 @@ public class UsersController {
     private static final String ERROR_MSG_USER_ID_NOT_FOUND = "Пользователь c id=%s не найден";
 
     @GetMapping(value = "/admin/edit")
-    public String edit(@RequestParam final long id, Model model) {
+    public String edit(@RequestParam(name = "id") final long id, Model model) {
         try {
             model.addAttribute("user", userService.findById(id).orElseThrow());
         } catch (NoSuchElementException e) {
@@ -85,6 +91,10 @@ public class UsersController {
             userValidator.validate(user, bindingResult);
         }
         if (bindingResult.hasErrors()) {
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+//                    String.format("Некорректные значения полей: %s",
+//                            String.join(";", bindingResult.getFieldErrors().stream().map(FieldError::toString).toList())));
             return "admin/editUser";
         }
         userService.update(id, user);

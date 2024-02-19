@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="/css/bootstrap.css" rel="stylesheet" />
-    <title>User</title>
+    <title>User page</title>
 <!--    <link th:href="@{/css/styles.css}" rel="stylesheet">-->
 </head>
 <body>
@@ -41,18 +42,51 @@
     </div>
 </nav>
 
+<div class="container-fluid">
+    <div class="row min-vh-100">
+        <div class="col-sm-2 col-xs-12">
+            <ul class="nav nav-pills flex-column">
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link" th:href="@{/admin}" >Admin</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page">User</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-sm-10 col-xs-12 bg-light">
+            <h1>User information page</h1>
 
-<footer>
-<form th:method="POST" th:action="@{/logout}"><input type="submit" class="submitLink" value="logout"></form>
-<h1 th:text="${loggedInUser.getName() + ' ' + loggedInUser.getSurname() + ', добро пожаловать!'}">User, welcome spring boot security page!</h1>
-<table>
-    <tr><td>username:</td><td th:text="${loggedInUser.getUsername()}">username</td></tr>
-    <tr><td>имя:</td><td th:text="${loggedInUser.getName()}">name</td></tr>
-    <tr><td>фамилия:</td><td th:text="${loggedInUser.getSurname()}">surname</td></tr>
-    <tr><td>e-mail:</td><td th:text="${loggedInUser.getEmail()}">e-mail</td></tr>
-    <tr><td>возраст:</td><td th:text="${loggedInUser.getAge()}">age</td></tr>
-    <tr><td>роль:</td><td><div th:each="r : ${loggedInUser.getAuthorities()}"><p th:text="${r}"></p></div></td></tr>
-</table>
-</footer>
+            <div class="tab-content p-2 bg-body border">
+                <h4 class="p-2 bg-body-secondary">About user</h4>
+                <table class="table table-striped p-2 border-top">
+                    <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">First Name</th>
+                        <th scope="col">Last Name</th>
+                        <th scope="col">Age</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Role</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td th:text="${loggedInUser.getId()}">Id</td>
+                        <td th:text="${loggedInUser.getUsername()}">Username</td>
+                        <td th:text="${loggedInUser.getName()}">Name</td>
+                        <td th:text="${loggedInUser.getSurname()}">Surname</td>
+                        <td th:text="${loggedInUser.getAge()}">age</td>
+                        <td th:text="${loggedInUser.getEmail()}">email</td>
+                        <td><th:block th:text="${#strings.listJoin(loggedInUser.getAuthorities(),' ')}"></th:block></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
 </body>
 </html>

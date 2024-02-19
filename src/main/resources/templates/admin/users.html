@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="/css/bootstrap.css" rel="stylesheet" />
+<!--    <script src="/js/bootstrap.bundle.js"></script>-->
     <title>Admin panel</title>
 <!--    <link th:href="@{/css/styles.css}" rel="stylesheet">-->
 
@@ -60,7 +62,7 @@
                         <a class="nav-link active" aria-current="page" >Users table</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">New user</a>
+                        <a class="nav-link" th:href="@{/admin/newUser}">New user</a>
                     </li>
                 </ul>
 
@@ -70,6 +72,7 @@
                         <thead>
                         <tr>
                             <th scope="col">ID</th>
+                            <th scope="col">Username</th>
                             <th scope="col">First Name</th>
                             <th scope="col">Last Name</th>
                             <th scope="col">Age</th>
@@ -82,15 +85,31 @@
                         <tbody>
                         <tr th:each="user : ${users}">
                             <td th:text="${user.getId()}">Id</td>
+                            <td th:text="${user.getUsername()}">Username</td>
                             <td th:text="${user.getName()}">Name</td>
                             <td th:text="${user.getSurname()}">Surname</td>
                             <td th:text="${user.getAge()}">age</td>
                             <td th:text="${user.getEmail()}">email</td>
                             <td><th:block th:text="${#strings.listJoin(user.getAuthorities(),' ')}"></th:block></td>
                             <td>
-                                <form th:method="POST" th:action="@{/admin/edit?id={id}(id=${user.getId()})}">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#editModal"
+                                        th:data-id="${user.id}"
+                                        th:data-username="${user.username}"
+                                        th:data-name="${user.name}"
+                                        th:data-surname="${user.surname}"
+                                        th:data-age="${user.age}"
+                                        th:data-email="${user.email}"
+                                        th:data-roles="${user.roles}">
+                                    Edit
+                                </button>
+
+<!--
+                                <form th:action="@{/admin/edit}" th:method="get">
+                                    <input type="hidden" name="id" th:value="${user.getId()}">
                                     <input class="btn btn-primary" type="submit" value="Edit">
                                 </form>
+-->
                             </td>
                             <td>
                                 <form th:method="DELETE" th:action="@{/admin?id={id}(id=${user.getId()})}">
@@ -105,6 +124,82 @@
             </div>
         </div>
 </div>
+
+
+<!-- Кнопка-триггер модального окна
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Запустите демо модального окна
+</button>
+-->
+
+<!-- Модальное окно -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit user</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <form class="d-flex flex-column min-vh-100 align-items-center" id="formModalEdit"
+                      th:method="patch"
+                      th:action="@{/admin}"
+                      th:object="${userToUpdate}">
+<!--                    th:action="@{/admin?id={uid}(uid=*{id})}"-->
+<!--                    th:action="@{/admin?id={uid}(uid=${userToUpdate.getId()})}"-->
+                    <div class="mb-3">
+                        <label for="modalUserId" class="form-label">User Id</label>
+                        <input th:field="*{id}" type="text" class="form-control" id="modalUserId" disabled="disabled">
+                    </div>
+                    <div class="mb-3">
+                        <label for="modalUsername" class="form-label">Username</label>
+                        <input th:field="*{username}" type="text" class="form-control" id="modalUsername">
+                    </div>
+                    <div class="mb-3">
+                        <label for="modalUserFirstName" class="form-label">First Name</label>
+                        <input th:field="*{name}" type="text" class="form-control" id="modalUserFirstName">
+<!--                        <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger">Name Error</div>-->
+                    </div>
+                    <div class="mb-3">
+                        <label for="modalUserLastName" class="form-label">Last Name</label>
+                        <input th:field="*{surname}" type="text" class="form-control" id="modalUserLastName">
+<!--                        <div th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}" class="text-danger">Surname Error</div>-->
+                    </div>
+                    <div class="mb-3">
+                        <label for="modalUserAge" class="form-label">Age</label>
+                        <input th:field="*{age}" type="number" class="form-control" id="modalUserAge">
+                    </div>
+                    <div class="mb-3">
+                        <label for="modalUserEmail" class="form-label">Email</label>
+                        <input th:field="*{email}" type="email" class="form-control" id="modalUserEmail">
+                    </div>
+                    <div class="mb-3">
+                        <label for="modalUserPassword" class="form-label">Password</label>
+                        <input th:field="*{password}" type="password" class="form-control" id="modalUserPassword">
+                    </div>
+                    <div class="mb-3">
+                        <input type="hidden" th:field="*{id}" />
+                        <label for="modalUserRoles" class="form-label">Role</label>
+                        <br>
+                        <select class="form-select" size="3" id="modalUserRoles" th:field="*{roles}" multiple="multiple">
+                            <option th:each="role : ${allRoles}"
+                                    th:value="${{role}}"
+                                    th:text="${role}">
+                                Role
+                            </option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" form="formModalEdit">Edit</button>
+<!--                <button type="button" class="btn btn-primary">Edit</button>-->
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!--<footer class="container-fluid">-->
 <!--    <table>-->
@@ -138,6 +233,87 @@
 <!--        </tbody>-->
 <!--    </table>-->
 <!--</footer>-->
+
+<script src="/js/bootstrap.bundle.js"></script>
+
+<script>
+    const modal = document.getElementById('editModal')
+
+    modal.addEventListener('show.bs.modal', evt =>  {
+        // console.log('show instance method called!');
+
+        var id = evt.relatedTarget.dataset.id;
+        var username = evt.relatedTarget.dataset.name;
+        var name = evt.relatedTarget.dataset.name;
+        var surname = evt.relatedTarget.dataset.surname;
+        var age = evt.relatedTarget.dataset.age;
+        var email = evt.relatedTarget.dataset.email;
+        var roles = evt.relatedTarget.dataset.roles;
+
+        // console.log(id);
+
+        document.getElementById("modalUserId").value = id;
+        // document.getElementById("modalUserId").setAttribute("value", id);
+        document.getElementById("modalUserFirstName").value = name;
+        // document.getElementById("modalUserFirstName").setAttribute("value", name);
+        document.getElementById("modalUsername").value = username;
+        // document.getElementById("modalUsername").setAttribute("value", username);
+        document.getElementById("modalUserLastName").value = surname;
+        // document.getElementById("modalUserLastName").setAttribute("value", surname);
+        document.getElementById("modalUserAge").value = age;
+        // document.getElementById("modalUserAge").setAttribute("value", age);
+        document.getElementById("modalUserEmail").value = email;
+        // document.getElementById("modalUserEmail").setAttribute("value", email);
+        // document.getElementById("modalUserRoles").value = roles;
+        // document.getElementById("modalUserRoles").setAttribute("value", roles);
+
+        var modalSelectUserRoles = document.getElementById("modalUserRoles");
+
+        for (i = 0; i < modalSelectUserRoles.length; i++) {
+            modalSelectUserRoles.options[i].selected = roles.includes(modalSelectUserRoles.options[i].label);
+        }
+
+        // var formAction = document.getElementById("formModalEdit").action;
+        // var newFormAction = formAction.concat('?id=').concat(id);
+        // console.log(formAction);
+        // console.log(newFormAction);
+        // document.getElementById("formModalEdit").action = newFormAction;
+
+
+
+        // var id = (evt.relatedTarget).data('id');
+        // console.log(id);
+
+    })
+
+    // modal.addEventListener('shown.bs.modal', () => {
+    //     console.log('modal element completely visible!');
+    // })
+
+    var modalForm = document.getElementById('formModalEdit');
+    if (modalForm.addEventListener) {
+        modalForm.addEventListener('submit', (event) => {
+
+            var userId = document.getElementById('modalUserId').value;
+
+            var formAction = document.getElementById("formModalEdit").action;
+            // console.log(formAction);
+            // alert(formAction);
+
+            var newFormAction = formAction.concat('?id=').concat(userId);
+            // console.log(newFormAction);
+            // alert(formAction);
+
+            document.getElementById("formModalEdit").action = newFormAction;
+
+            // event.preventDefault();
+
+            // document.getElementById("formModalEdit").action = newFormAction;
+
+        });
+    }
+
+</script>
 
 </body>
 </html>
