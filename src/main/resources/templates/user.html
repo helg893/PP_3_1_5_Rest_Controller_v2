@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="/css/bootstrap.css" rel="stylesheet" />
     <title>User page</title>
-<!--    <link th:href="@{/css/styles.css}" rel="stylesheet">-->
 </head>
 <body>
 
@@ -16,13 +15,11 @@
             <ul class="navbar-nav me-auto mb-1 mb-md-0">
                 <li class="nav-item" sec:authorize="isAuthenticated()">
                     <a class="nav-link active" th:href="@{/user}"><h4 sec:authentication="name">USER NAME</h4></a>
-                    <!--                    <a class="nav-link active" th:href="@{/user}"><h1 th:text="${user.getUsername()}">USER NAME</h1></a>-->
                 </li>
                 <li class="nav-item disabled" sec:authorize="isAuthenticated()">
                     <a class="nav-link"><h4>with roles:</h4></a>
                 </li>
                 <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <!--                    <a class="nav-link"><h1 sec:authentication="${#strings.listJoin(principal.authorities, ', ')}"></h1></a>-->
                     <a class="nav-link" disabled=""><h4 th:text="${#strings.listJoin(loggedInUser.getAuthorities(),', ')}">[ROLES]</h4></a>
                 </li>
             </ul>

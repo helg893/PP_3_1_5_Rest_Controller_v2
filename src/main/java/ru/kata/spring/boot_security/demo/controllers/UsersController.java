@@ -18,10 +18,7 @@ import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.services.RoleService;
 import ru.kata.spring.boot_security.demo.services.UserService;
 import ru.kata.spring.boot_security.demo.util.UserValidator;
-
-
 import java.security.Principal;
-import java.util.NoSuchElementException;
 
 @Controller
 public class UsersController {
@@ -70,32 +67,17 @@ public class UsersController {
         return "redirect:/admin";
     }
 
-    private static final String ERROR_MSG_USER_ID_NOT_FOUND = "Пользователь c id=%s не найден";
-
-    @GetMapping(value = "/admin/edit")
-    public String edit(@RequestParam(name = "id") final long id, Model model) {
-        try {
-            model.addAttribute("user", userService.findById(id).orElseThrow());
-        } catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format(ERROR_MSG_USER_ID_NOT_FOUND, id));
-        }
-        model.addAttribute("allRoles", roleService.findAll());
-        return "admin/editUser";
-    }
-
     @PatchMapping(value = "/admin")
-    public String update(@RequestParam final long id/*@RequestParam final String id*/,
+    public String update(@RequestParam final long id,
                          @ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
         String oldUsername = userService.findById(id).orElseThrow().getUsername();
         if (!oldUsername.equalsIgnoreCase(user.getUsername())) {
             userValidator.validate(user, bindingResult);
         }
         if (bindingResult.hasErrors()) {
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-//                    String.format("Некорректные значения полей: %s",
-//                            String.join(";", bindingResult.getFieldErrors().stream().map(FieldError::toString).toList())));
-            return "admin/editUser";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    String.format("INCORRECT FIELDS VALUES: %s",
+                            String.join(";", bindingResult.getFieldErrors().stream().map(FieldError::toString).toList())));
         }
         userService.update(id, user);
         return "redirect:/admin";
