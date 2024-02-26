@@ -18,7 +18,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
 //                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
-                        .requestMatchers("/", "/api/users/**").permitAll()
+                        .requestMatchers("/", "/api/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()

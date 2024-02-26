@@ -54,35 +54,85 @@
 
         <div class="col-sm-10 col-xs-12 bg-light">
             <H1>Admin panel</H1>
-            <ul class="nav nav-tabs">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" >Users table</a>
+            <ul class="nav nav-tabs" id="adminTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="usersTable-tab" data-bs-toggle="tab"
+                            data-bs-target="#usersTable-tab-pane" type="button" role="tab"
+                            aria-controls="usersTable-tab-pane" aria-selected="true">
+                        Users table
+                    </button>
+<!--                    <a class="nav-link active" aria-current="page" >Users table</a>-->
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/admin/newUser}">New user</a>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="newUser-tab" data-bs-toggle="tab"
+                            data-bs-target="#newUser-tab-pane" type="button" role="tab"
+                            aria-controls="newUser-tab-pane" aria-selected="false">
+                        New user
+                    </button>
+<!--                    <a class="nav-link" th:href="@{/admin/newUser}">New user</a>-->
                 </li>
             </ul>
 
-            <div class="tab-content p-2 bg-body border">
-                <h4 class="p-2 bg-body-secondary">All users</h4>
-                <table class="table table-striped p-2 border-top">
-                    <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Username</th>
-                        <th scope="col">First Name</th>
-                        <th scope="col">Last Name</th>
-                        <th scope="col">Age</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Role</th>
-                        <th scope="col">Edit</th>
-                        <th scope="col">Delete</th>
-                    </tr>
-                    </thead>
-                    <tbody id="usersTable">
+            <div class="tab-content p-2 bg-body border" id="adminTabContent">
+                <div class="tab-pane fade show active" id="usersTable-tab-pane"
+                     role="tabpanel" aria-labelledby="usersTable-tab" tabindex="0">
+                    <h4 class="p-2 bg-body-secondary">All users</h4>
+                    <table class="table table-striped p-2 border-top">
+                        <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Username</th>
+                            <th scope="col">First Name</th>
+                            <th scope="col">Last Name</th>
+                            <th scope="col">Age</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">Edit</th>
+                            <th scope="col">Delete</th>
+                        </tr>
+                        </thead>
+                        <tbody id="usersTable"></tbody>
+                    </table>
+                </div>
+                <div class="tab-pane fade" id="newUser-tab-pane"
+                     role="tabpanel" aria-labelledby="newUser-tab" tabindex="0">
+                    <h4 class="p-2 bg-body-secondary">Add new user</h4>
+                    <form class="d-flex flex-column min-vh-100 align-items-center">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" placeholder="enter Username...">
+                        </div>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="name" placeholder="enter First Name...">
+                        </div>
+                        <div class="mb-3">
+                            <label for="surname" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="surname" placeholder="enter Last Name...">
+                        </div>
+                        <div class="mb-3">
+                            <label for="age" class="form-label">Age</label>
+                            <input type="number" class="form-control" id="age" placeholder="enter Age...">
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" placeholder="enter Email...">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" placeholder="enter Password...">
+                        </div>
+                        <div class="mb-3">
+                            <label for="roles" class="form-label">Role</label>
+                            <br>
+                            <select class="form-select" size="3" id="roles" multiple="multiple"></select>
+                        </div>
+                        <div class="mb-3">
+                            <input class="btn btn-success" type="submit" value="Add new user"/>
+                        </div>
+                    </form>
 
-                    </tbody>
-                </table>
+                </div>
             </div>
         </div>
 
