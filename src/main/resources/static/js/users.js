@@ -73,27 +73,17 @@ async function showAllUsers() {
                         <td>${users[key].roles.map(value => value.name.substring(5)).join(' ')}</td>
                         <td>
                             <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#editModal"
-                                    data-id="${users[key].id}"
-                                    data-username="${users[key].username}"
-                                    data-name="${users[key].name}"
-                                    data-surname="${users[key].surname}"
-                                    data-age="${users[key].age}"
-                                    data-email="${users[key].email}"
-                                    data-roles="${users[key].roles}">
+                                    data-bs-target="#modalEdit"
+                                    data-operation="edit"
+                                    data-id="${users[key].id}">
                                 Edit
                             </button>
                         </td>
                         <td>
                             <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                    data-bs-target="#editModal"
-                                    data-id="${users[key].id}"
-                                    data-username="${users[key].username}"
-                                    data-name="${users[key].name}"
-                                    data-surname="${users[key].surname}"
-                                    data-age="${users[key].age}"
-                                    data-email="${users[key].email}"
-                                    data-roles="${users[key].roles}">
+                                    data-bs-target="#modalEdit"
+                                    data-operation="delete"
+                                    data-id="${users[key].id}">
                                 Delete
                             </button>
                         </td>
@@ -305,4 +295,45 @@ newUserEmail.addEventListener("input", () => {
         }
     }
     checkIfEmailExists()
+})
+
+async function getUser(id) {
+    try {
+        let response = await fetch(urlUsers + "/" + id)
+        if (response.ok) {
+            return await response.json()
+        } else {
+            alert("fetching user id=" + id + " unexpected response: " + response.status + " " + response.statusText)
+        }
+
+    } catch (e) {
+        alert("fetching user id=" + id + " unexpected error: " + e)
+    }
+}
+
+const formEditUser = document.getElementById("formEditUser")
+const modalEdit = document.getElementById("modalEdit")
+modalEdit.addEventListener("show.bs.modal", event => {
+    const showUser = async () => {
+        const user = await getUser(event.relatedTarget.dataset.id)
+        console.log(user)
+        console.log(user.username)
+        console.log(user.roles)
+        formEditUser.id.value = user.id
+        formEditUser.username.value = user.username
+        formEditUser.name.value = user.name
+        formEditUser.surname.value = user.surname
+        formEditUser.email.value = user.email
+        formEditUser.age.value = user.age
+
+    }
+    showUser()
+    // console.log(event.relatedTarget.dataset.id)
+    // console.log(event.relatedTarget.dataset.username)
+    // console.log(event.relatedTarget.dataset.name)
+    // console.log(event.relatedTarget.dataset.surname)
+    // console.log(event.relatedTarget.dataset.email)
+    // formEditUser.id.value = event.relatedTarget.dataset.id
+    // formEditUser.username.value = event.relatedTarget.dataset.username
+    // formEditUser.surname.value = event.relatedTarget.dataset.surname
 })
