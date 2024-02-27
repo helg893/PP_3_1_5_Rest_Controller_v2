@@ -61,7 +61,6 @@
                             aria-controls="usersTable-tab-pane" aria-selected="true">
                         Users table
                     </button>
-<!--                    <a class="nav-link active" aria-current="page" >Users table</a>-->
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="newUser-tab" data-bs-toggle="tab"
@@ -69,7 +68,6 @@
                             aria-controls="newUser-tab-pane" aria-selected="false">
                         New user
                     </button>
-<!--                    <a class="nav-link" th:href="@{/admin/newUser}">New user</a>-->
                 </li>
             </ul>
 
@@ -97,35 +95,41 @@
                 <div class="tab-pane fade" id="newUser-tab-pane"
                      role="tabpanel" aria-labelledby="newUser-tab" tabindex="0">
                     <h4 class="p-2 bg-body-secondary">Add new user</h4>
-                    <form class="d-flex flex-column min-vh-100 align-items-center">
+                    <form class="d-flex flex-column min-vh-100 align-items-center" id="formNewUser">
                         <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" placeholder="enter Username...">
+                            <label for="newUserUsername" class="form-label">Username</label>
+                            <input type="text" class="form-control" name="username" id="newUserUsername"
+                                   required placeholder="enter Username here...">
                         </div>
                         <div class="mb-3">
                             <label for="name" class="form-label">First Name</label>
-                            <input type="text" class="form-control" id="name" placeholder="enter First Name...">
+                            <input type="text" class="form-control" name="name" id="name"
+                                   placeholder="enter First Name here...">
                         </div>
                         <div class="mb-3">
                             <label for="surname" class="form-label">Last Name</label>
-                            <input type="text" class="form-control" id="surname" placeholder="enter Last Name...">
+                            <input type="text" class="form-control" name="surname" id="surname"
+                                   placeholder="enter Last Name here...">
                         </div>
                         <div class="mb-3">
                             <label for="age" class="form-label">Age</label>
-                            <input type="number" class="form-control" id="age" placeholder="enter Age...">
+                            <input type="number" class="form-control" name="age" id="age"
+                                   placeholder="enter Age here...">
                         </div>
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" placeholder="enter Email...">
+                            <label for="newUserEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" id="newUserEmail"
+                                   required placeholder="enter Email here...">
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" placeholder="enter Password...">
+                            <input type="password" class="form-control" name="password" id="password"
+                                   required placeholder="enter Password here...">
                         </div>
                         <div class="mb-3">
-                            <label for="roles" class="form-label">Role</label>
+                            <label for="newUserRoles" class="form-label">Role</label>
                             <br>
-                            <select class="form-select" size="3" id="roles" multiple="multiple"></select>
+                            <select class="form-select" size="3" name="roles" id="newUserRoles" multiple="multiple"></select>
                         </div>
                         <div class="mb-3">
                             <input class="btn btn-success" type="submit" value="Add new user"/>
@@ -136,6 +140,59 @@
             </div>
         </div>
 
+    </div>
+</div>
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalHeaderLabel">Edit user</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <form class="d-flex flex-column min-vh-100 align-items-center" id="formEditUser">
+                    <div class="mb-3">
+                        <label for="modalUserId" class="form-label">User Id</label>
+                        <input name="id" type="text" class="form-control" id="modalUserId" disabled="disabled">
+                    </div>
+                    <div class="mb-3">
+                        <label for="modalUsername" class="form-label">Username</label>
+                        <input name="username" type="text" class="form-control" id="modalUsername">
+                    </div>
+                    <div class="mb-3">
+                        <label for="modalUserFirstName" class="form-label">First Name</label>
+                        <input name="name" type="text" class="form-control" id="modalUserFirstName">
+                    </div>
+                    <div class="mb-3">
+                        <label for="modalUserLastName" class="form-label">Last Name</label>
+                        <input name="surname" type="text" class="form-control" id="modalUserLastName">
+                    </div>
+                    <div class="mb-3">
+                        <label for="modalUserAge" class="form-label">Age</label>
+                        <input name="age" type="number" class="form-control" id="modalUserAge">
+                    </div>
+                    <div class="mb-3">
+                        <label for="modalUserEmail" class="form-label">Email</label>
+                        <input name="email" type="email" class="form-control" id="modalUserEmail">
+                    </div>
+                    <div class="mb-3" id="modalDivPassword">
+                        <label for="modalUserPassword" class="form-label">Password</label>
+                        <input name="password" type="password" class="form-control" id="modalUserPassword">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editUserRoles" class="form-label">Role</label>
+                        <br>
+                        <select class="form-select" size="3" id="editUserRoles" name="roles" multiple="multiple">
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" form="formEditUser" id="modalButtonSubmit">Edit</button>
+            </div>
+        </div>
     </div>
 </div>
 
