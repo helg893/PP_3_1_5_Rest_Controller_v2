@@ -17,9 +17,8 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // TODO: must to be enabled?
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
-                        .requestMatchers("/", "/api/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/admin/**", "/api/**").hasRole("ADMIN")
                         .requestMatchers("/user").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
