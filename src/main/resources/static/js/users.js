@@ -13,49 +13,6 @@ async function getAllUsers() {
     }
 }
 
-// async function showAllUsers() {
-//     try {
-//         let response = await fetch(urlUsers)
-//
-//         if (response.ok) {
-//             let content = await response.json()
-//             let usersTable = document.querySelector('#usersTable')
-//
-//             for (let key in content) {
-//                 usersTable.innerHTML += `
-//                     <tr>
-//                         <td>${content[key].id}</td>
-//                         <td>${content[key].username}</td>
-//                         <td>${content[key].name}</td>
-//                         <td>${content[key].surname}</td>
-//                         <td>${content[key].age}</td>
-//                         <td>${content[key].email}</td>
-//                         <td>${content[key].roles.map(value => value.name.substring(5)).join(' ')}</td>
-//                         <td>
-//                             <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-//                                     data-bs-target="#editModal"
-//                                     th:data-id="${content[key].id}"
-//                                     th:data-username="${content[key].username}"
-//                                     th:data-name="${content[key].name}"
-//                                     th:data-surname="${content[key].surname}"
-//                                     th:data-age="${content[key].age}"
-//                                     th:data-email="${content[key].email}"
-//                                     th:data-roles="${content[key].roles}">
-//                                 Edit
-//                             </button>
-//                         </td>
-//                         <td>Delete</td>
-//                     </tr>
-//                 `
-//             }
-//         } else {
-//             alert('Unexpected getAllUsers response: ' + response.status + ' ' + response.statusText)
-//         }
-//     } catch (e) {
-//         alert('Fetching users error: ' + e)
-//     }
-// }
-
 async function showAllUsers() {
     const users = await getAllUsers()
     let usersTable = document.querySelector('#usersTable')
@@ -111,6 +68,7 @@ async function getAllRoles() {
 
 }
 
+
 async function showAllRoles() {
     const roles = await getAllRoles()
     const newUserRoles = document.getElementById("newUserRoles")
@@ -122,23 +80,6 @@ async function showAllRoles() {
     }
 }
 
-// async function showAllRoles() {
-//     try {
-//         let response = await fetch(urlRoles)
-//         if (response.ok) {
-//             let content = await response.json()
-//             let roles = document.querySelector('#roles')
-//             for (let key in content) {
-//                 roles.innerHTML += `<option value="${content[key].name}">${content[key].shortName}</option>`
-//             }
-//         } else {
-//             alert('Unexpected response: ' + response.status + ' ' + response.statusText)
-//         }
-//     } catch (e) {
-//         alert('Fetching users roles error: ' + e)
-//     }
-// }
-
 showAllRoles()
 
 const usersTabletab = document.getElementById("usersTable-tab");
@@ -149,9 +90,7 @@ usersTabletab.addEventListener("click", () => {
 let formNewUser = document.getElementById("formNewUser")
 formNewUser.addEventListener("submit",  async (event) =>  {
     try {
-
         event.preventDefault()
-
 
         const newUserRoles = document.getElementById("newUserRoles")
         let roles = []
@@ -171,60 +110,7 @@ formNewUser.addEventListener("submit",  async (event) =>  {
             if(!Reflect.has(object, key)){
                 object[key] = value;
             }
-
         });
-        // let json = JSON.stringify(object);
-        // console.log(json)
-
-
-//         const jsonNewUser = `
-// {
-// "username": "U5",
-// "password": "555",
-// "name": "U5",
-// "surname": "U5",
-// "age": 55,
-// "email": "u5@mail.ru",
-// "roles": [
-// {
-// "id": 5,
-// "name": "ROLE_ADMIN"
-// },
-// {
-// "id": 6,
-// "name": "ROLE_USER"
-// }
-// ]
-// }
-//         `
-
-
-
-        // const formData = new FormData(formNewUser)
-        // let object = {};
-        // formData.forEach((value, key) => {
-        //     // Reflect.has in favor of: object.hasOwnProperty(key)
-        //     if(!Reflect.has(object, key)){
-        //         object[key] = value;
-        //         return;
-        //     }
-        //     if(!Array.isArray(object[key])){
-        //         object[key] = [object[key]];
-        //     }
-        //     object[key].push(value);
-        // });
-        // console.log(object)
-        // let json = JSON.stringify(object);
-        // console.log(json)
-
-
-
-        // for (let [key, value] of formData.entries()) {
-        //     console.log(key, value);
-        // }
-        //
-        // console.log(fd.get('username'))
-
 
         const response = await fetch(urlUsers, {
             method: "POST",
@@ -233,7 +119,6 @@ formNewUser.addEventListener("submit",  async (event) =>  {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(object)
-            // body: json
         })
 
         if (!response.ok) {
@@ -245,29 +130,13 @@ formNewUser.addEventListener("submit",  async (event) =>  {
             document.getElementById("usersTable-tab").click()
         }
 
-        // const response = await fetch(urlUsers, {
-        //     method: "POST",
-        //     headers: {
-        //         'Accept': 'application/json',
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: jsonNewUser
-        // })
-
-        // console.log("response.ok=" + response.ok)
-        // console.log("response.status=" + response.status)
-        // console.log("response.statusText=" + response.statusText)
-        // console.log(await response.json())
-
-
-
     } catch (e) {
         alert("fetching new user unexpected error: " + e)
     }
 })
 
 const newUserUsername = document.getElementById("newUserUsername")
-newUserUsername.addEventListener("input", event => {
+newUserUsername.addEventListener("input", () => {
     const checkIfUsersExists = async () => {
         const users = await getAllUsers()
         newUserUsername.setCustomValidity("");
@@ -346,7 +215,6 @@ modalEdit.addEventListener("show.bs.modal", event => {
     const modalButtonSubmit = document.getElementById("modalButtonSubmit")
     if (event.relatedTarget.dataset.operation === "delete") {
         formEditUser.setAttribute("method", "DELETE")
-        // formEditUser.method = "DELETE"
         formEditUser.password.value="pwd"
         modalDivPassword.style.display = "none"
         formEditUser.username.disabled = true
@@ -359,7 +227,6 @@ modalEdit.addEventListener("show.bs.modal", event => {
         modalHeaderLabel.textContent = "Delete user"
     } else if (event.relatedTarget.dataset.operation === "edit") {
         formEditUser.setAttribute("method", "PUT")
-        // formEditUser.method = "PATCH"
         modalDivPassword.style.display = ""
         formEditUser.username.disabled = false
         formEditUser.name.disabled = false
@@ -445,7 +312,6 @@ formEditUser.addEventListener("submit", async (event)=>{
     } else {
         alert("modal form submit: unexpected user operation value")
     }
-
 })
 
 const modalUsername = document.getElementById("modalUsername");
@@ -458,12 +324,6 @@ modalUsername.addEventListener("input", ()=> {
                 modalUsername.setCustomValidity("another user with this username exists. please enter new username")
                 break
             }
-            // if (user.id != modalUserId.value) {
-            //     if (modalUsername.value === user.username) {
-            //         modalUsername.setCustomValidity("another user with this username exists. please enter new username")
-            //         break
-            //     }
-            // }
         }
     }
     checkIfUsernameExists()
@@ -479,12 +339,6 @@ modalUserEmail.addEventListener("input", ()=> {
                 modalUserEmail.setCustomValidity("another user with this email exists. please enter new email")
                 break
             }
-            // if (user.id != modalUserId.value) {
-            //     if (modalUserEmail.value === user.email) {
-            //         modalUserEmail.setCustomValidity("another user with this email exists. please enter new email")
-            //         break
-            //     }
-            // }
         }
     }
     checkIfUserEmailExists()
