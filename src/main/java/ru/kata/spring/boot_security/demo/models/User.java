@@ -1,6 +1,5 @@
 package ru.kata.spring.boot_security.demo.models;
 
-import jakarta.persistence.FetchType;
 import lombok.Data;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -50,7 +49,7 @@ public class User implements UserDetails {
     @Email(message = "должен быть корректный адрес e-mail")
     private String email;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany  // (fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
                 joinColumns = @JoinColumn(name = "user_id"),
                 inverseJoinColumns = @JoinColumn(name = "role_id"))

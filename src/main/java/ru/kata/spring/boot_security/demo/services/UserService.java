@@ -24,7 +24,7 @@ public class UserService implements UserDetailsService {
     }
 
     public Optional<User> findByUsername(String username) {
-        return Optional.ofNullable(userRepository.findByUsername(username));
+        return userRepository.findByUsername(username);
     }
 
     public Optional<User> findById(long id) {
@@ -32,7 +32,7 @@ public class UserService implements UserDetailsService {
     }
 
     private Optional<User> findByEmail(String email) {
-        return Optional.ofNullable(userRepository.findByEmail(email));
+        return userRepository.findByEmail(email);
     }
 
     public List<User> findAll() {
